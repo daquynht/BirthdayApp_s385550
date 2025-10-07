@@ -11,37 +11,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.room.Room
+import com.example.birthdayapp_s385550.data.AppDatabase
+import com.example.birthdayapp_s385550.repositories.PersonRepository
+import com.example.birthdayapp_s385550.ui.screens.PersonApp
 import com.example.birthdayapp_s385550.ui.theme.BirthdayApp_s385550Theme
+import com.example.birthdayapp_s385550.ui.viewmodels.PersonViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "person_db"
+        ).build()
+        val repository = PersonRepository(db.personDao())
+        val viewModel= PersonViewModel(repository, application)
         setContent {
-            BirthdayApp_s385550Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            PersonApp(viewModel)
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BirthdayApp_s385550Theme {
-        Greeting("Android")
-    }
-}
